@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" name="yscdcatalogue" packages="">
+	<Appenders>
+		<Console name="console" target="SYSTEM_OUT">
+			<PatternLayout pattern="%date{YYYY/MM/dd HH:mm:ss,SSS} %-5p [%thread] %class(%line) - %message%n" />
+		</Console>
+		<File name="file" fileName="YSCDCatalogue.log" append="true">
+			<PatternLayout pattern="%date{YYYY/MM/dd HH:mm:ss,SSS} %-5p [%thread] %class(%line) - %message%n" />
+		</File>
+	</Appenders>
+	<Loggers>
+		<logger name="com.stulsoft" level="debug">
+			<!-- <AppenderRef ref="console" /> -->
+			<AppenderRef ref="file" />
+		</logger>
+		<Root level="debug">
+		</Root>
+	</Loggers>
+</Configuration>

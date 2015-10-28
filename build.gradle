@@ -1,0 +1,35 @@
+apply plugin: 'java'
+def version="0.2.0"
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile 'junit:junit:4.12'
+    compile (
+    	  'org.apache.commons:commons-lang3:3.4'
+    	, 'com.fasterxml.jackson.core:jackson-databind:2.6.0'
+    	, 'org.apache.logging.log4j:log4j-api:2.3'
+    	, 'org.apache.logging.log4j:log4j-core:2.3'
+    )
+}
+
+javadoc.title = 'YS CD Catalogue'
+
+build.dependsOn('copyToLib')
+
+task copyToLib(type: Copy) {
+    into "$buildDir\\libs"
+    from configurations.compile
+}
+
+jar{
+	manifest{
+		attributes  (
+		"Implementation-Title": project.name
+		, "Implementation-Version": version
+		, 'Main-Class':'com.stulsoft.yscdcatalogue.YSCDCatalogueMain'
+		, "Class-Path": configurations.compile.collect { it.getName() }.join(' ')
+		)
+	}
+}

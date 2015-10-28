@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.stulsoft.yscdcatalogue.controller.CategoryViewController">
+	<children>
+		<GridPane prefHeight="60.0" prefWidth="400.0">
+			<columnConstraints>
+				<ColumnConstraints hgrow="SOMETIMES" maxWidth="195.0" minWidth="10.0" prefWidth="115.0" />
+				<ColumnConstraints hgrow="SOMETIMES" maxWidth="285.0" minWidth="10.0" prefWidth="285.0" />
+			</columnConstraints>
+			<rowConstraints>
+				<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+				<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+			</rowConstraints>
+			<children>
+				<Label text="Parent category" />
+				<Label text="Category:" GridPane.rowIndex="1" />
+				<TextField fx:id="parentCategoryName" editable="false" focusTraversable="false" GridPane.columnIndex="1" />
+				<TextField fx:id="categoryName" promptText="Enter the category name" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+			</children>
+		</GridPane>
+		<TilePane alignment="BOTTOM_RIGHT" hgap="5.0" prefHeight="42.0" prefWidth="400.0" VBox.vgrow="NEVER">
+			<children>
+				<Button fx:id="buttonOK" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onOkButton" text="OK" defaultButton="true"/>
+				<Button fx:id="buttonCancel" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onCancelButton" text="Cancel" />
+			</children>
+			<VBox.margin>
+				<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+			</VBox.margin>
+			<padding>
+				<Insets bottom="5.0" left="5.0" right="10.0" top="5.0" />
+			</padding>
+		</TilePane>
+	</children>
+</VBox>

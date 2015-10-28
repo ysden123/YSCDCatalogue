@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.input.*?>
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.stulsoft.yscdcatalogue.controller.MainViewController">
+	<children>
+		<MenuBar>
+			<menus>
+				<Menu mnemonicParsing="false" text="File">
+					<items>
+						<MenuItem mnemonicParsing="false" onAction="#onNew" text="New" />
+						<MenuItem mnemonicParsing="false" onAction="#onOpen" text="Open" />
+						<MenuItem mnemonicParsing="false" onAction="#onSave" text="Save" />
+						<SeparatorMenuItem />
+						<MenuItem mnemonicParsing="false" onAction="#onExit" text="Exit" />
+					</items>
+				</Menu>
+				<Menu mnemonicParsing="false" onMenuValidation="#onMenuValidation" text="Edit">
+					<items>
+						<MenuItem fx:id="menuItemAddCategory" mnemonicParsing="false" onAction="#onAddCategory" text="Add category" />
+						<MenuItem fx:id="menuItemEditCategory" mnemonicParsing="false" onAction="#onEditCategory" text="Edit category" />
+						<SeparatorMenuItem mnemonicParsing="false" />
+						<MenuItem fx:id="menuItemAddDisk" mnemonicParsing="false" onAction="#onAddDisk" text="Add disk" />
+						<MenuItem fx:id="menuItemDelete" mnemonicParsing="false" onAction="#onDelete" text="Delete category/disk" />
+						<SeparatorMenuItem mnemonicParsing="false" />
+						<MenuItem fx:id="menuItemCut" mnemonicParsing="false" onAction="#onCut" text="Cut category/disk" />
+						<MenuItem fx:id="menuItemPaste" mnemonicParsing="false" onAction="#onPaste" text="Paste category/disk" />
+						<SeparatorMenuItem mnemonicParsing="false" />
+						<MenuItem fx:id="menuItemFind" mnemonicParsing="false" onAction="#onFind" text="Find category/disk" />
+					</items>
+				</Menu>
+			</menus>
+		</MenuBar>
+		<SplitPane dividerPositions="0.5" prefHeight="160.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+			<items>
+				<TreeView fx:id="softTree" prefHeight="200.0" prefWidth="200.0">
+					<padding>
+						<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+					</padding>
+					<contextMenu>
+						<ContextMenu onShowing="#onContextMenuShowing">
+							<items>
+								<MenuItem fx:id="menuCItemAddCategory" mnemonicParsing="false" onAction="#onAddCategory" text="Add category" />
+								<MenuItem fx:id="menuCItemEditCategory" mnemonicParsing="false" onAction="#onEditCategory" text="Edit category" />
+								<SeparatorMenuItem mnemonicParsing="false" />
+								<MenuItem fx:id="menuCItemAddDisk" mnemonicParsing="false" onAction="#onAddDisk" text="Add disk" />
+								<MenuItem fx:id="menuCItemDelete" mnemonicParsing="false" onAction="#onDelete" text="Delete category/disk" />
+								<SeparatorMenuItem mnemonicParsing="false" />
+								<MenuItem fx:id="menuCItemCut" mnemonicParsing="false" onAction="#onCut" text="Cut category/disk" />
+								<MenuItem fx:id="menuCItemPaste" mnemonicParsing="false" onAction="#onPaste" text="Paste category/disk" />
+							</items>
+						</ContextMenu>
+					</contextMenu>
+				</TreeView>
+				<TreeTableView fx:id="diskTree" prefHeight="200.0" prefWidth="200.0">
+					<columnResizePolicy>
+						<TreeTableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+					</columnResizePolicy>
+					<columns>
+						<TreeTableColumn fx:id="diskTreeNameColumn" prefWidth="75.0" text="Name" />
+						<TreeTableColumn fx:id="diskTreeDateColumn" prefWidth="75.0" text="Date" />
+						<TreeTableColumn fx:id="diskTreeSizeColumn" prefWidth="75.0" text="Size" />
+					</columns>
+				</TreeTableView>
+			</items>
+			<VBox.margin>
+				<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+			</VBox.margin>
+		</SplitPane>
+	</children>
+</VBox>
