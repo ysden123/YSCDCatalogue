@@ -29,6 +29,21 @@ public class DiskItem {
 	private DiskItemType type;
 	private Long size;
 	private Date date;
+	private String comment;
+
+	/**
+	 * @return the comment
+	 */
+	public String getComment() {
+		return comment;
+	}
+
+	/**
+	 * @param comment the comment to set
+	 */
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
 
 	/**
 	 * @return the storageName
@@ -132,15 +147,15 @@ public class DiskItem {
 		this.date = date;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	
+	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((comment == null) ? 0 : comment.hashCode());
 		result = prime * result + ((date == null) ? 0 : date.hashCode());
 		result = prime * result + ((fullPath == null) ? 0 : fullPath.hashCode());
 		result = prime * result + ((size == null) ? 0 : size.hashCode());
@@ -149,9 +164,7 @@ public class DiskItem {
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -163,6 +176,11 @@ public class DiskItem {
 		if (getClass() != obj.getClass())
 			return false;
 		DiskItem other = (DiskItem) obj;
+		if (comment == null) {
+			if (other.comment != null)
+				return false;
+		} else if (!comment.equals(other.comment))
+			return false;
 		if (date == null) {
 			if (other.date != null)
 				return false;
@@ -188,14 +206,14 @@ public class DiskItem {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	
+
+	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "DiskItem [storageName=" + storageName + ", fullPath=" + fullPath + ", type=" + type + ", size=" + size + ", date=" + date + "]";
+		return "DiskItem [storageName=" + storageName + ", fullPath=" + fullPath + ", type=" + type + ", size=" + size + ", date=" + date + ", comment=" + comment + "]";
 	}
 
 	/**

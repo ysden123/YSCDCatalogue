@@ -49,8 +49,10 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.TreeTableColumn.CellEditEvent;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.TreeView;
+import javafx.scene.control.cell.TextFieldTreeTableCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
@@ -136,6 +138,9 @@ public class MainViewController {
 	@FXML
 	private TreeTableColumn<DiskItem, String> diskTreeSizeColumn;
 
+	@FXML
+	private TreeTableColumn<DiskItem, String> diskTreeCommentColumn;
+
 	@FXML // This method is called by the FXMLLoader when initialization is complete
 	private void initialize() {
 		assert softTree != null : "fx:id=\"softTree\" was not injected: check your FXML file 'mainView.fxml'.";
@@ -157,9 +162,31 @@ public class MainViewController {
 
 		assert diskTree != null : "fx:id=\"diskTree\" was not injected: check your FXML file 'mainView.fxml'.";
 
+		diskTree.setEditable(true);
+
 		diskTreeNameColumn.setCellValueFactory((TreeTableColumn.CellDataFeatures<DiskItem, String> p) -> new ReadOnlyStringWrapper(p.getValue().getValue().getFileName()));
+		diskTreeNameColumn.setEditable(false);
+		
 		diskTreeDateColumn.setCellValueFactory((TreeTableColumn.CellDataFeatures<DiskItem, String> p) -> new ReadOnlyStringWrapper(p.getValue().getValue().getFileDate()));
+		diskTreeDateColumn.setEditable(false);
+		
 		diskTreeSizeColumn.setCellValueFactory((TreeTableColumn.CellDataFeatures<DiskItem, String> p) -> new ReadOnlyStringWrapper(p.getValue().getValue().getFileSize()));
+		diskTreeSizeColumn.setEditable(false);
+		
+		diskTreeCommentColumn.setCellValueFactory((TreeTableColumn.CellDataFeatures<DiskItem, String> p) -> new ReadOnlyStringWrapper(p.getValue().getValue().getComment()));
+		diskTreeCommentColumn.setCellFactory(TextFieldTreeTableCell.forTreeTableColumn());
+		diskTreeCommentColumn.setEditable(true);
+		diskTreeCommentColumn.setOnEditCommit(new EventHandler<TreeTableColumn.CellEditEvent<DiskItem,String>>() {
+			
+			/**
+			 * @param event
+			 */
+			@Override
+			public void handle(final CellEditEvent<DiskItem, String> event) {
+				final DiskItem diskItem = event.getRowValue().getValue();
+				diskItem.setComment(event.getNewValue());
+			}
+		});
 
 		softTree.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TreeItem<SoftItem>>() {
 

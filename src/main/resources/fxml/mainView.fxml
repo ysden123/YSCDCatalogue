@@ -65,6 +65,7 @@
 						<TreeTableColumn fx:id="diskTreeNameColumn" prefWidth="75.0" text="Name" />
 						<TreeTableColumn fx:id="diskTreeDateColumn" prefWidth="75.0" text="Date" />
 						<TreeTableColumn fx:id="diskTreeSizeColumn" prefWidth="75.0" text="Size" />
+						<TreeTableColumn fx:id="diskTreeCommentColumn" prefWidth="75.0" text="Comment" />
 					</columns>
 				</TreeTableView>
 			</items>
