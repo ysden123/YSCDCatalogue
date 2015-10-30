@@ -112,6 +112,7 @@ public class EmbeddedNeo4j {
 
 			System.out.println("\nRelationships");
 			ggops.getAllRelationships().forEach(r -> System.out.println("Relationship: " + r.getProperty("message")));
+			
 			System.out.println("YS end");
 			// YS
 			tx.success();
