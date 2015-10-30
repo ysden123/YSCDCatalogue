@@ -1,5 +1,7 @@
 apply plugin: 'java'
-def version="0.2.1"
+def version="1.0.0"
+def neo4jVersion="2.3.0"
+
 repositories {
     mavenCentral()
 }
@@ -11,6 +13,7 @@ dependencies {
     	, 'com.fasterxml.jackson.core:jackson-databind:2.6.0'
     	, 'org.apache.logging.log4j:log4j-api:2.3'
     	, 'org.apache.logging.log4j:log4j-core:2.3'
+    	, "org.neo4j:neo4j:${neo4jVersion}"
     )
 }
 
