@@ -3,24 +3,22 @@
  */
 package com.stulsoft.yscdcatalogue;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 
 import org.junit.Test;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stulsoft.yscdcatalogue.data.DiskItem;
 import com.stulsoft.yscdcatalogue.data.DiskItemNode;
-import com.stulsoft.yscdcatalogue.data.DiskItemType;
 import com.stulsoft.yscdcatalogue.data.DiskItemTree;
+import com.stulsoft.yscdcatalogue.data.DiskItemType;
 import com.stulsoft.yscdcatalogue.data.SoftItem;
 import com.stulsoft.yscdcatalogue.data.SoftItemNode;
-import com.stulsoft.yscdcatalogue.data.SoftItemType;
 import com.stulsoft.yscdcatalogue.data.SoftItemTree;
+import com.stulsoft.yscdcatalogue.data.SoftItemType;
 import com.stulsoft.yscdcatalogue.persistence.SoftItemTreePersistence;
 
 import javafx.scene.control.TreeItem;
@@ -44,13 +42,7 @@ public class SoftItemTreePersistenceTest {
 
 			SoftItemTreePersistence.load(fileName);
 		}
-		catch (JsonGenerationException e) {
-			fail(e.getMessage());
-		}
-		catch (JsonMappingException e) {
-			fail(e.getMessage());
-		}
-		catch (IOException e) {
+		catch (Exception e) {
 			fail(e.getMessage());
 		}
 	}
@@ -98,7 +90,7 @@ public class SoftItemTreePersistenceTest {
 				DiskItemNode diskItemNode = new DiskItemNode(diskItem, null);
 				diskTree.getRoot().addChild(diskItemNode);
 			}
-			softItem.setDisk(diskTree);
+			softItem.setDiskId(diskTree.getId());
 		}
 
 		return softTree;

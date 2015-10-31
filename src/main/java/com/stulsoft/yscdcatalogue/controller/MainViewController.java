@@ -26,6 +26,7 @@ import com.stulsoft.yscdcatalogue.data.SoftItemNode;
 import com.stulsoft.yscdcatalogue.data.SoftItemTree;
 import com.stulsoft.yscdcatalogue.data.SoftItemType;
 import com.stulsoft.yscdcatalogue.persistence.ConfigurationPersistence;
+import com.stulsoft.yscdcatalogue.persistence.DBManager;
 import com.stulsoft.yscdcatalogue.persistence.SoftItemTreePersistence;
 import com.stulsoft.yscdcatalogue.service.FileTreeWalk;
 
@@ -197,8 +198,17 @@ public class MainViewController {
 			 */
 			@Override
 			public void changed(ObservableValue<? extends TreeItem<SoftItem>> observable, TreeItem<SoftItem> oldValue, TreeItem<SoftItem> newValue) {
-				if (newValue != null && newValue.getValue().getDisk() != null) {
-					diskTree.setRoot(getRootDiskTreeView(newValue.getValue().getDisk()));
+//				if (newValue != null && newValue.getValue().getDisk() != null) {
+				if (newValue != null && newValue.getValue().getDiskId() != null) {
+					DiskItemTree tree;
+					try {
+						tree = DBManager.getInstance().getDiskItemTree(newValue.getValue().getDiskId());
+					}
+					catch (Exception e) {
+						(new Alert(AlertType.ERROR,e.getMessage())).showAndWait();
+						return;
+					}
+					diskTree.setRoot(getRootDiskTreeView(tree));
 				} else {
 					diskTree.setRoot(null);
 				}
@@ -401,14 +411,24 @@ public class MainViewController {
 						try {
 							storageName = Utils.getStorageName(directory);
 							TreeItem<SoftItem> child = new TreeItem<SoftItem>(new SoftItem(storageName, SoftItemType.DISK), new ImageView(diskIcon));
-							child.getValue().setDisk(tree);
+							child.getValue().setDiskId(tree.getId());
 							node.getChildren().add(child);
 							sortSoftTreeItem(node);
-							dirty = true;
+							try {
+								DBManager.getInstance().saveDiskItemTree(tree);
+								DBManager.getInstance().saveSoftItemTree(Utils.buildSoftTree(softTree.getRoot()));
+							}
+							catch (Exception e) {
+								String msg = String.format("Failed storing Disk Item Tree into database. Error: %s", e.getMessage());
+								logger.error(msg, e);
+								throw new IOException(msg, e);
+							}
 							softTree.getSelectionModel().select(child);
 						}
 						catch (IOException e) {
-							logger.error("Failed adding a disk " + directory.getAbsolutePath() + ", error: " + e.getMessage(), e);
+							String msg = String.format("Failed adding disk. Error: %s", e.getMessage());
+							logger.error(msg, e);
+							(new Alert(AlertType.ERROR, msg)).showAndWait();
 						}
 					}
 				});

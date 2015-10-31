@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Date;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -76,6 +77,9 @@ public class FileTreeWalk {
 		t.getRoot().getData().setType(DiskItemType.DISK);
 		t.getRoot().getData().setStorageName(Utils.getStorageName(new File(startFolder)));
 
+		String id = UUID.randomUUID().toString();
+		t.setId(id);
+		
 		return t;
 	}
 }

@@ -13,6 +13,7 @@ import java.util.Optional;
  *
  */
 public class DiskItemTree {
+	private String id;
 	private DiskItemNode root;
 
 	/**
@@ -29,6 +30,20 @@ public class DiskItemTree {
 	 */
 	public DiskItemTree(DiskItem rootData) {
 		root = new DiskItemNode(rootData, null);
+	}
+
+	/**
+	 * @return the id
+	 */
+	public String getId() {
+		return id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	/**
@@ -83,14 +98,12 @@ public class DiskItemTree {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "DiskTree [root=" + root + "]";
+		return "DiskItemTree [id=" + id + ", root=" + root + "]";
 	}
 
 	/**

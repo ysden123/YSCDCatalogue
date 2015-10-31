@@ -62,28 +62,30 @@ public class Search {
 	}
 
 	private void find(final Collection<SearchResult> results, final SoftItemNode node) {
-		if (node.getData().getType() == SoftItemType.DISK) {
-			logger.debug("Looking inside {}", node.getData().getName());
-			//@formatter:off
-			findInDisk(results, 
-					node.getData().getDisk().getRoot(), 
-					node.getParent().getData().getName(), 
-					node.getData().getDisk().getRoot().getData().getStorageName(), 
-					node.getTreeItem());
-			//@formatter:on
-		}
-		for (SoftItemNode child : node.getChildren()) {
-			find(results, child);
-		}
+		// TODO
+//		if (node.getData().getType() == SoftItemType.DISK) {
+//			logger.debug("Looking inside {}", node.getData().getName());
+//			//@formatter:off
+//			findInDisk(results, 
+//					node.getData().getDisk().getRoot(), 
+//					node.getParent().getData().getName(), 
+//					node.getData().getDisk().getRoot().getData().getStorageName(), 
+//					node.getTreeItem());
+//			//@formatter:on
+//		}
+//		for (SoftItemNode child : node.getChildren()) {
+//			find(results, child);
+//		}
 	}
 
 	private void findInDisk(final Collection<SearchResult> results, final DiskItemNode diskItemNode, final String categoryName, final String diskName, final TreeItem<SoftItem> treeItem) {
-		if (StringUtils.containsIgnoreCase(diskItemNode.getData().getFullPath(), searchText)) {
-			SearchResult result = new SearchResult(categoryName, diskName, diskItemNode.getData().getFullPath(), treeItem);
-			results.add(result);
-		}
-		for (DiskItemNode child : diskItemNode.getChildren()) {
-			findInDisk(results, child, categoryName, diskName, treeItem);
-		}
+		// TODO
+//		if (StringUtils.containsIgnoreCase(diskItemNode.getData().getFullPath(), searchText)) {
+//			SearchResult result = new SearchResult(categoryName, diskName, diskItemNode.getData().getFullPath(), treeItem);
+//			results.add(result);
+//		}
+//		for (DiskItemNode child : diskItemNode.getChildren()) {
+//			findInDisk(results, child, categoryName, diskName, treeItem);
+//		}
 	}
 }

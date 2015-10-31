@@ -17,8 +17,8 @@ public class SoftItem {
 	public static final String FIELD_NAME_DISK = "disk";
 
 	private String name;
-	private DiskItemTree disk;
 	private SoftItemType type;
+	private String diskId;
 
 	/**
 	 * @return the name
@@ -36,18 +36,18 @@ public class SoftItem {
 	}
 
 	/**
-	 * @return the disk
+	 * @return the diskId
 	 */
-	public DiskItemTree getDisk() {
-		return disk;
+	public String getDiskId() {
+		return diskId;
 	}
 
 	/**
-	 * @param disk
-	 *            the disk to set
+	 * @param diskId
+	 *            the diskId to set
 	 */
-	public void setDisk(DiskItemTree disk) {
-		this.disk = disk;
+	public void setDiskId(String diskId) {
+		this.diskId = diskId;
 	}
 
 	/**

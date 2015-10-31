@@ -3,17 +3,10 @@
  */
 package com.stulsoft.yscdcatalogue.persistence;
 
-import java.io.File;
-import java.io.IOException;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stulsoft.yscdcatalogue.Utils;
 import com.stulsoft.yscdcatalogue.controller.MainViewController;
 import com.stulsoft.yscdcatalogue.data.SoftItem;
@@ -34,20 +27,16 @@ public class SoftItemTreePersistence {
 	 * @param fileName
 	 *            specifies the file
 	 * @return the root tree item.
-	 * @throws IOException
+	 * @throws Exception
 	 *             I/O exception
-	 * @throws JsonMappingException
-	 *             system error
-	 * @throws JsonParseException
-	 *             system error
 	 */
-	public static SoftItemTree load(final String fileName) throws JsonParseException, JsonMappingException, IOException {
+	public static SoftItemTree load(final String fileName) throws Exception {
 		if (StringUtils.isEmpty(fileName))
 			throw new IllegalArgumentException("fileName is null or empty.");
 		logger.info("Load from file {}", fileName);
 
-		ObjectMapper mapper = new ObjectMapper();
-		SoftItemTree softTree = mapper.readValue(new File(fileName), SoftItemTree.class);
+		SoftItemTree softTree = DBManager.getInstance().getSoftItemTree();
+
 		logger.info("Loading completed.");
 		return softTree;
 	}
@@ -59,14 +48,10 @@ public class SoftItemTreePersistence {
 	 *            the soft tree item
 	 * @param fileName
 	 *            the file name
-	 * @throws IOException
+	 * @throws Exception
 	 *             I/O exception
-	 * @throws JsonMappingException
-	 *             system error
-	 * @throws JsonGenerationException
-	 *             system error
 	 */
-	public static void save(final TreeItem<SoftItem> softTreeItem, final String fileName) throws JsonGenerationException, JsonMappingException, IOException {
+	public static void save(final TreeItem<SoftItem> softTreeItem, final String fileName) throws Exception {
 		if (softTreeItem == null)
 			throw new IllegalArgumentException("softTreeItem is null.");
 		if (StringUtils.isEmpty(fileName))
@@ -74,11 +59,9 @@ public class SoftItemTreePersistence {
 		logger.info("Save into file {}", fileName);
 		SoftItemTree softTree = Utils.buildSoftTree(softTreeItem);
 
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.writeValue(new File(fileName), softTree);
+		DBManager.getInstance().saveSoftItemTree(softTree);
 
 		logger.info("Saving completed.");
 	}
 
-	
 }
