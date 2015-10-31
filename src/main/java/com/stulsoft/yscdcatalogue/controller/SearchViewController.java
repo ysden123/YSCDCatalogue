@@ -33,7 +33,8 @@ public class SearchViewController {
 	private TreeView<SoftItem> softTree;
 
 	/**
-	 * @param softTree the softTree to set
+	 * @param softTree
+	 *            the softTree to set
 	 */
 	public void setSoftTree(TreeView<SoftItem> softTree) {
 		this.softTree = softTree;
@@ -85,8 +86,9 @@ public class SearchViewController {
 			 */
 			@Override
 			public void changed(ObservableValue<? extends SearchResult> observable, SearchResult oldValue, SearchResult newValue) {
-				System.out.println(newValue.getFileName());
-				softTree.getSelectionModel().select(newValue.getTreeItem());
+				if (newValue != null) {
+					softTree.getSelectionModel().select(newValue.getTreeItem());
+				}
 			}
 		});
 	}

@@ -10,11 +10,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.stulsoft.yscdcatalogue.data.DiskItemNode;
+import com.stulsoft.yscdcatalogue.data.DiskItemTree;
 import com.stulsoft.yscdcatalogue.data.SearchResult;
 import com.stulsoft.yscdcatalogue.data.SoftItem;
 import com.stulsoft.yscdcatalogue.data.SoftItemNode;
 import com.stulsoft.yscdcatalogue.data.SoftItemTree;
 import com.stulsoft.yscdcatalogue.data.SoftItemType;
+import com.stulsoft.yscdcatalogue.persistence.DBManager;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -62,30 +64,44 @@ public class Search {
 	}
 
 	private void find(final Collection<SearchResult> results, final SoftItemNode node) {
-		// TODO
-//		if (node.getData().getType() == SoftItemType.DISK) {
-//			logger.debug("Looking inside {}", node.getData().getName());
-//			//@formatter:off
-//			findInDisk(results, 
-//					node.getData().getDisk().getRoot(), 
-//					node.getParent().getData().getName(), 
-//					node.getData().getDisk().getRoot().getData().getStorageName(), 
-//					node.getTreeItem());
-//			//@formatter:on
-//		}
-//		for (SoftItemNode child : node.getChildren()) {
-//			find(results, child);
-//		}
+		if (node.getData().getType() == SoftItemType.DISK) {
+			logger.debug("Looking inside {}", node.getData().getName());
+			DiskItemTree diskItemTree;
+			try {
+				diskItemTree = DBManager.getInstance().getDiskItemTree(node.getData().getDiskId());
+			}
+			catch (Exception e) {
+				String msg = String.format("Failed getting disk for %s, Error: %s", node.getData().getName(), e.getMessage());
+				logger.error(msg, e);
+				return;
+			}
+			
+			DiskItemNode rootNode = diskItemTree.getRoot();
+			
+			//@formatter:off
+			findInDisk(results, 
+					rootNode, 
+					node.getParent().getData().getName(), 
+					rootNode.getData().getStorageName(), 
+					node.getTreeItem());
+			//@formatter:on
+		}
+		for (SoftItemNode child : node.getChildren()) {
+			find(results, child);
+		}
 	}
 
 	private void findInDisk(final Collection<SearchResult> results, final DiskItemNode diskItemNode, final String categoryName, final String diskName, final TreeItem<SoftItem> treeItem) {
-		// TODO
-//		if (StringUtils.containsIgnoreCase(diskItemNode.getData().getFullPath(), searchText)) {
-//			SearchResult result = new SearchResult(categoryName, diskName, diskItemNode.getData().getFullPath(), treeItem);
-//			results.add(result);
-//		}
-//		for (DiskItemNode child : diskItemNode.getChildren()) {
-//			findInDisk(results, child, categoryName, diskName, treeItem);
-//		}
+		//@formatter:off
+		if (StringUtils.containsIgnoreCase(diskItemNode.getData().getFullPath(), searchText)
+				|| StringUtils.containsIgnoreCase(diskItemNode.getData().getComment(), searchText)
+				|| StringUtils.containsIgnoreCase(diskItemNode.getData().getStorageName(), searchText)) {
+			SearchResult result = new SearchResult(categoryName, diskName, diskItemNode.getData().getFullPath(), treeItem);
+			results.add(result);
+		}
+		//@formatter:on
+		for (DiskItemNode child : diskItemNode.getChildren()) {
+			findInDisk(results, child, categoryName, diskName, treeItem);
+		}
 	}
 }
