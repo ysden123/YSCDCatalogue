@@ -186,6 +186,18 @@ public class MainViewController {
 			public void handle(final CellEditEvent<DiskItem, String> event) {
 				final DiskItem diskItem = event.getRowValue().getValue();
 				diskItem.setComment(event.getNewValue());
+				TreeItem<DiskItem> diskItemViewTree = event.getRowValue();
+				
+				DiskItemTree diskItemTree = Utils.buildDiskTree(diskItemViewTree, softTree.getSelectionModel().getSelectedItem().getValue().getDiskId());
+
+				try {
+					DBManager.getInstance().saveDiskItemTree(diskItemTree);
+				}
+				catch (Exception e) {
+					String msg = String.format("Failed saving changes. Error: %s", e.getMessage());
+					logger.error(msg, e);
+					(new Alert(AlertType.ERROR, msg)).showAndWait();
+				}
 			}
 		});
 
@@ -198,7 +210,6 @@ public class MainViewController {
 			 */
 			@Override
 			public void changed(ObservableValue<? extends TreeItem<SoftItem>> observable, TreeItem<SoftItem> oldValue, TreeItem<SoftItem> newValue) {
-//				if (newValue != null && newValue.getValue().getDisk() != null) {
 				if (newValue != null && newValue.getValue().getDiskId() != null) {
 					DiskItemTree tree;
 					try {
@@ -349,6 +360,7 @@ public class MainViewController {
 			Alert alert = new Alert(AlertType.CONFIRMATION, String.format("Are you sure to delete \"%s\" category/disk?", node.getValue().getName()));
 			Optional<ButtonType> answer = alert.showAndWait();
 			if (answer.isPresent() && answer.get() == ButtonType.OK) {
+				DBManager.getInstance().deleteAllDisks(node);
 				node.getParent().getChildren().remove(node);
 				dirty = true;
 			}

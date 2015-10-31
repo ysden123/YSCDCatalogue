@@ -10,6 +10,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import com.stulsoft.yscdcatalogue.data.DiskItem;
+import com.stulsoft.yscdcatalogue.data.DiskItemNode;
+import com.stulsoft.yscdcatalogue.data.DiskItemTree;
 import com.stulsoft.yscdcatalogue.data.SoftItem;
 import com.stulsoft.yscdcatalogue.data.SoftItemNode;
 import com.stulsoft.yscdcatalogue.data.SoftItemTree;
@@ -88,5 +91,45 @@ public class Utils {
 		FileStore fs = Files.getFileStore(path);
 		String storageName = fs.name();
 		return storageName;
+	}
+
+	/**
+	 * Builds a Disk Item Tree
+	 * 
+	 * @param diskItemViewTree
+	 *            an item from disk view tree
+	 * @param diskId
+	 *            the disk ID
+	 * @return the Disk Item Tree
+	 */
+	public static DiskItemTree buildDiskTree(final TreeItem<DiskItem> diskItemViewTree, final String diskId) {
+		TreeItem<DiskItem> rootDiskTreeItem;
+		TreeItem<DiskItem> rootParentTreeDiskItem;
+
+		rootDiskTreeItem = diskItemViewTree.getParent();
+
+		if (rootDiskTreeItem == null) {
+			rootDiskTreeItem = diskItemViewTree;
+		} else {
+
+			while ((rootParentTreeDiskItem = rootDiskTreeItem.getParent()) != null) {
+				rootDiskTreeItem = rootParentTreeDiskItem;
+			}
+		}
+
+		DiskItemTree tree = new DiskItemTree(rootDiskTreeItem.getValue());
+		tree.setId(diskId);
+
+		rootDiskTreeItem.getChildren().forEach(child -> {
+			addDiskItemChild(tree.getRoot(), child);
+		});
+
+		return tree;
+	}
+
+	private static void addDiskItemChild(final DiskItemNode node, TreeItem<DiskItem> child) {
+		DiskItemNode subNode = new DiskItemNode(child.getValue(), node);
+		node.addChild(subNode);
+		child.getChildren().forEach(subChild -> addDiskItemChild(subNode, subChild));
 	}
 }
