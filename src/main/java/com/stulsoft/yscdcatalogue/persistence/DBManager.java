@@ -64,8 +64,9 @@ public class DBManager {
 		}
 		catch (Exception e) {
 			logger.error(e.getMessage(), e);
-			configuration = new Configuration("d:/work/YSCDCatalogueDB");
-			// TODO here must default user dir
+			// set users's directory.
+			
+			configuration = new Configuration(System.getProperty("user.home") + File.separator + "YSCDCatalogueDB");
 		}
 		directory = configuration.getDirectoryName();
 		File dir = new File(directory);

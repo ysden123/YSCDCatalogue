@@ -19,7 +19,7 @@ import org.mapdb.DBMaker;
 public class MapDBT01 {
 
 	/**
-	 * @param args
+	 * @param args app arguments
 	 */
 	public static void main(String[] args) {
 		test01();

@@ -18,8 +18,6 @@ public class SoftItemTreePersistence {
 	/**
 	 * Loads a root tree item.
 	 * 
-	 * @param fileName
-	 *            specifies the file
 	 * @return the root tree item.
 	 * @throws Exception
 	 *             I/O exception
@@ -34,8 +32,6 @@ public class SoftItemTreePersistence {
 	 * 
 	 * @param softTreeItem
 	 *            the soft tree item
-	 * @param fileName
-	 *            the file name
 	 * @throws Exception
 	 *             I/O exception
 	 */
