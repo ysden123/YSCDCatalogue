@@ -37,10 +37,9 @@ public class SoftItemTreePersistenceTest {
 	public void testSaveLoadTemp() {
 		TreeItem<SoftItem> t = buildSoftTreeItem();
 		try {
-			final String fileName = "d:\\transmit\\test.json";
-			SoftItemTreePersistence.save(t, fileName);
+			SoftItemTreePersistence.save(t);
 
-			SoftItemTreePersistence.load(fileName);
+			SoftItemTreePersistence.load();
 		}
 		catch (Exception e) {
 			fail(e.getMessage());

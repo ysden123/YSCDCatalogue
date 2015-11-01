@@ -3,12 +3,7 @@
  */
 package com.stulsoft.yscdcatalogue.persistence;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.stulsoft.yscdcatalogue.Utils;
-import com.stulsoft.yscdcatalogue.controller.MainViewController;
 import com.stulsoft.yscdcatalogue.data.SoftItem;
 import com.stulsoft.yscdcatalogue.data.SoftItemTree;
 
@@ -19,7 +14,6 @@ import javafx.scene.control.TreeItem;
  *
  */
 public class SoftItemTreePersistence {
-	private static final Logger logger = LogManager.getLogger(MainViewController.class);
 
 	/**
 	 * Loads a root tree item.
@@ -30,14 +24,8 @@ public class SoftItemTreePersistence {
 	 * @throws Exception
 	 *             I/O exception
 	 */
-	public static SoftItemTree load(final String fileName) throws Exception {
-		if (StringUtils.isEmpty(fileName))
-			throw new IllegalArgumentException("fileName is null or empty.");
-		logger.info("Load from file {}", fileName);
-
+	public static SoftItemTree load() throws Exception {
 		SoftItemTree softTree = DBManager.getInstance().getSoftItemTree();
-
-		logger.info("Loading completed.");
 		return softTree;
 	}
 
@@ -51,17 +39,12 @@ public class SoftItemTreePersistence {
 	 * @throws Exception
 	 *             I/O exception
 	 */
-	public static void save(final TreeItem<SoftItem> softTreeItem, final String fileName) throws Exception {
+	public static void save(final TreeItem<SoftItem> softTreeItem) throws Exception {
 		if (softTreeItem == null)
 			throw new IllegalArgumentException("softTreeItem is null.");
-		if (StringUtils.isEmpty(fileName))
-			throw new IllegalArgumentException("fileName is null or empty.");
-		logger.info("Save into file {}", fileName);
 		SoftItemTree softTree = Utils.buildSoftTree(softTreeItem);
 
 		DBManager.getInstance().saveSoftItemTree(softTree);
-
-		logger.info("Saving completed.");
 	}
 
 }

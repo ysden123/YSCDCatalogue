@@ -9,18 +9,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.stulsoft.yscdcatalogue.controller.MainViewController;
 import com.stulsoft.yscdcatalogue.data.Configuration;
 import com.stulsoft.yscdcatalogue.persistence.ConfigurationPersistence;
 
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 /**
  * @author Yuriy Stul
@@ -45,18 +42,8 @@ public class YSCDCatalogueMain extends Application {
 			scene.getStylesheets().add(getClass().getResource("/css/application.css").toExternalForm());
 			primaryStage.setScene(scene);
 			setInitialTitle(primaryStage);
-			
-			primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/images/application.png")));
 
-			final MainViewController mainViewController = loader.getController();
-			primaryStage.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST, new EventHandler<WindowEvent>() {
-				@Override
-				public void handle(WindowEvent event) {
-					if (!mainViewController.onCloseWindow()) {
-						event.consume();
-					}
-				}
-			});
+			primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/images/application.png")));
 
 			primaryStage.show();
 		}
@@ -79,7 +66,7 @@ public class YSCDCatalogueMain extends Application {
 	private void setInitialTitle(final Stage primaryStage) {
 		try {
 			Configuration configuration = ConfigurationPersistence.load();
-			final String fileName = configuration.getFileName();
+			final String fileName = configuration.getDirectoryName();
 			if (StringUtils.isEmpty(fileName)) {
 				primaryStage.setTitle(Utils.getTitle(null));
 			} else {

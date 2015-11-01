@@ -66,10 +66,9 @@ public class FileTreeWalk {
 				if (t.findNode(node.getData()) == null) {
 					DiskItem parentItem = new DiskItem(p.getParent().toString(), DiskItemType.DIRECTORY, null, null);
 					DiskItemNode parent = t.findNode(parentItem);
-					if (parent == null) {
-						System.out.println("No parent for " + node.toString());
+					if (parent != null) {
+						parent.addChild(node);
 					}
-					parent.addChild(node);
 				}
 			}
 		});

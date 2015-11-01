@@ -17,6 +17,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stulsoft.yscdcatalogue.data.Configuration;
 
 /**
+ * Configuration persistence.
+ * 
  * @author Yuriy Stul
  *
  */

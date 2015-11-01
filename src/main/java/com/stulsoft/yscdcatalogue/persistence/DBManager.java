@@ -14,6 +14,7 @@ import org.mapdb.DB;
 import org.mapdb.DBMaker;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.stulsoft.yscdcatalogue.data.Configuration;
 import com.stulsoft.yscdcatalogue.data.DiskItemTree;
 import com.stulsoft.yscdcatalogue.data.SoftItem;
 import com.stulsoft.yscdcatalogue.data.SoftItemTree;
@@ -33,6 +34,7 @@ public class DBManager {
 	private NavigableSet<String> softItemTreeSet;
 	private ConcurrentNavigableMap<String, String> diskItemTreeMap;
 	private DB db;
+	private String directory;
 
 	private DBManager() {
 		logger.debug("Creating instance of DB Manager");
@@ -56,7 +58,21 @@ public class DBManager {
 	}
 
 	private void initialize() {
-		db = DBMaker.newFileDB(new File("d:/work/testMapDB.db")).closeOnJvmShutdown().make();
+		Configuration configuration;
+		try {
+			configuration = ConfigurationPersistence.load();
+		}
+		catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			configuration = new Configuration("d:/work/YSCDCatalogueDB");
+			// TODO here must default user dir
+		}
+		directory = configuration.getDirectoryName();
+		File dir = new File(directory);
+		if (!dir.exists()) {
+			dir.mkdirs();
+		}
+		db = DBMaker.newFileDB(new File(directory, "YSCDCatalogueDB.db")).closeOnJvmShutdown().make();
 		softItemTreeSet = db.getTreeSet("softItemTree");
 		diskItemTreeMap = db.getTreeMap("diskItemTree");
 	}
@@ -96,19 +112,23 @@ public class DBManager {
 	 *             I/O exception
 	 */
 	public SoftItemTree getSoftItemTree() throws Exception {
-		String json = softItemTreeSet.first();
-		ObjectMapper mapper = new ObjectMapper();
-		SoftItemTree tree;
-		try {
-			tree = mapper.readValue(json, SoftItemTree.class);
-		}
-		catch (Exception e) {
-			String message = String.format("Error during reading Json for SoftItemTree. Error: %s.", e.getMessage());
-			logger.error(message, e);
-			throw new Exception(message, e);
-		}
+		if (!softItemTreeSet.isEmpty()) {
+			String json = softItemTreeSet.first();
+			ObjectMapper mapper = new ObjectMapper();
+			SoftItemTree tree;
+			try {
+				tree = mapper.readValue(json, SoftItemTree.class);
+			}
+			catch (Exception e) {
+				String message = String.format("Error during reading Json for SoftItemTree. Error: %s.", e.getMessage());
+				logger.error(message, e);
+				throw new Exception(message, e);
+			}
 
-		return tree;
+			return tree;
+		} else {
+			return null;
+		}
 	}
 
 	/**
@@ -179,5 +199,30 @@ public class DBManager {
 		node.getChildren().forEach(subNode -> {
 			deleteAllDisks(subNode);
 		});
+	}
+
+	/**
+	 * Sets a new directory for DB and re-initialize the database.
+	 * 
+	 * @param directory
+	 *            specifies the database directory.
+	 */
+	public void setDirectory(final String directory) {
+		if (StringUtils.isEmpty(directory))
+			throw new IllegalArgumentException("directory is null or empty.");
+		this.directory = directory;
+		db.commit();
+		db.close();
+
+		initialize();
+	}
+
+	/**
+	 * Returns a database directory.
+	 * 
+	 * @return the database directory.
+	 */
+	public String getDirectory() {
+		return directory;
 	}
 }

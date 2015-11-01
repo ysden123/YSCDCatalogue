@@ -33,20 +33,16 @@ public class Utils {
 	 * @return the application title.
 	 */
 	public static String getTitle(final File file) {
-		String title = String.format("%s %s%s", CommonConstants.APPLICATION_NAME, CommonConstants.APPLICATION_VERSION, getFileName(file));
+		String title = String.format("%s %s%s", CommonConstants.APPLICATION_NAME, CommonConstants.APPLICATION_VERSION, getDirectoryName(file));
 		return title;
 	}
 
-	private static String getFileName(final File file) {
-		String fileName = "";
+	private static String getDirectoryName(final File file) {
+		String directoryName = "";
 		if (file != null) {
-			String fileNameWithExtension = file.getName();
-			int i = fileNameWithExtension.lastIndexOf(".");
-			if (i > 0) {
-				fileName = ", " + fileNameWithExtension.substring(0, i);
-			}
+			directoryName = ", " + file.getName();
 		}
-		return fileName;
+		return directoryName;
 	}
 
 	/**

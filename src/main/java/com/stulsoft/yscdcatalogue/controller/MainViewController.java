@@ -58,8 +58,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
-import javafx.stage.FileChooser;
-import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -70,7 +68,6 @@ import javafx.stage.Stage;
 public class MainViewController {
 
 	private Logger logger = LogManager.getLogger(MainViewController.class);
-	private boolean dirty = false;
 
 	private TreeItem<SoftItem> sourceTreeItemFoCutPaste = null;
 
@@ -167,18 +164,18 @@ public class MainViewController {
 
 		diskTreeNameColumn.setCellValueFactory((TreeTableColumn.CellDataFeatures<DiskItem, String> p) -> new ReadOnlyStringWrapper(p.getValue().getValue().getFileName()));
 		diskTreeNameColumn.setEditable(false);
-		
+
 		diskTreeDateColumn.setCellValueFactory((TreeTableColumn.CellDataFeatures<DiskItem, String> p) -> new ReadOnlyStringWrapper(p.getValue().getValue().getFileDate()));
 		diskTreeDateColumn.setEditable(false);
-		
+
 		diskTreeSizeColumn.setCellValueFactory((TreeTableColumn.CellDataFeatures<DiskItem, String> p) -> new ReadOnlyStringWrapper(p.getValue().getValue().getFileSize()));
 		diskTreeSizeColumn.setEditable(false);
-		
+
 		diskTreeCommentColumn.setCellValueFactory((TreeTableColumn.CellDataFeatures<DiskItem, String> p) -> new ReadOnlyStringWrapper(p.getValue().getValue().getComment()));
 		diskTreeCommentColumn.setCellFactory(TextFieldTreeTableCell.forTreeTableColumn());
 		diskTreeCommentColumn.setEditable(true);
-		diskTreeCommentColumn.setOnEditCommit(new EventHandler<TreeTableColumn.CellEditEvent<DiskItem,String>>() {
-			
+		diskTreeCommentColumn.setOnEditCommit(new EventHandler<TreeTableColumn.CellEditEvent<DiskItem, String>>() {
+
 			/**
 			 * @param event
 			 */
@@ -187,7 +184,7 @@ public class MainViewController {
 				final DiskItem diskItem = event.getRowValue().getValue();
 				diskItem.setComment(event.getNewValue());
 				TreeItem<DiskItem> diskItemViewTree = event.getRowValue();
-				
+
 				DiskItemTree diskItemTree = Utils.buildDiskTree(diskItemViewTree, softTree.getSelectionModel().getSelectedItem().getValue().getDiskId());
 
 				try {
@@ -216,7 +213,7 @@ public class MainViewController {
 						tree = DBManager.getInstance().getDiskItemTree(newValue.getValue().getDiskId());
 					}
 					catch (Exception e) {
-						(new Alert(AlertType.ERROR,e.getMessage())).showAndWait();
+						(new Alert(AlertType.ERROR, e.getMessage())).showAndWait();
 						return;
 					}
 					diskTree.setRoot(getRootDiskTreeView(tree));
@@ -231,12 +228,12 @@ public class MainViewController {
 	private void initializeModel(final Object model) {
 		try {
 			Configuration configuration = ConfigurationPersistence.load();
-			final String fileName = configuration.getFileName();
+			final String fileName = configuration.getDirectoryName();
 			if (StringUtils.isEmpty(fileName)) {
 				softTree.setRoot(new TreeItem<SoftItem>(new SoftItem("Library", SoftItemType.CATEGORY)));
 			} else {
 				logger.info("Loading {}", fileName);
-				SoftItemTree softItemTree = SoftItemTreePersistence.load(fileName);
+				SoftItemTree softItemTree = SoftItemTreePersistence.load();
 				softTree.setRoot(buildSoftTreeItem(softItemTree));
 			}
 		}
@@ -303,7 +300,8 @@ public class MainViewController {
 					TreeItem<SoftItem> leaf = new TreeItem<SoftItem>(new SoftItem(controller.getCategoryName(), SoftItemType.CATEGORY), new ImageView(categoryIcon));
 					node.getChildren().add(leaf);
 					sortSoftTreeItem(node);
-					dirty = true;
+
+					DBManager.getInstance().saveSoftItemTree(Utils.buildSoftTree(softTree.getRoot()));
 				}
 			}
 			catch (Exception e) {
@@ -342,7 +340,7 @@ public class MainViewController {
 
 				if (controller.isOkClicked()) {
 					softItem.setName(controller.getCategoryName());
-					dirty = true;
+					DBManager.getInstance().saveSoftItemTree(Utils.buildSoftTree(softTree.getRoot()));
 					softTree.refresh();
 				}
 			}
@@ -362,7 +360,6 @@ public class MainViewController {
 			if (answer.isPresent() && answer.get() == ButtonType.OK) {
 				DBManager.getInstance().deleteAllDisks(node);
 				node.getParent().getChildren().remove(node);
-				dirty = true;
 			}
 		}
 	}
@@ -552,115 +549,89 @@ public class MainViewController {
 
 	@FXML
 	private void onNew(ActionEvent event) {
-		if (dirty) {
-			if (!onCloseWindow()) {
-				return;
+		DirectoryChooser dirChooser = new DirectoryChooser();
+		dirChooser.setTitle("Choose directory with data base.");
+
+		Configuration configuration;
+		try {
+			configuration = ConfigurationPersistence.load();
+		}
+		catch (Exception e) {
+			(new Alert(AlertType.ERROR, e.getMessage())).showAndWait();
+			configuration = new Configuration(null);
+		}
+
+		if (!StringUtils.isEmpty(configuration.getDirectoryName())) {
+			dirChooser.setInitialDirectory(new File(configuration.getDirectoryName()));
+		}
+
+		File directory = dirChooser.showDialog(getPrimaryStage());
+		if (directory != null) {
+			try {
+				configuration.setDirectoryName(directory.getAbsolutePath());
+				ConfigurationPersistence.save(configuration);
+				DBManager.getInstance().setDirectory(directory.getAbsolutePath());
+				TreeItem<SoftItem> root = new TreeItem<SoftItem>(new SoftItem("CHANGE THIS LIBRARAY NAME", SoftItemType.CATEGORY));
+				softTree.setRoot(root);
+				getPrimaryStage().setTitle(Utils.getTitle(directory));
+			}
+			catch (Exception e) {
+				String message = String.format("Failed loading from %s. Error: %s", directory.getAbsolutePath(), e.getMessage());
+				logger.error(message, e);
 			}
 		}
-		TreeItem<SoftItem> root = new TreeItem<SoftItem>(new SoftItem("CHANGE THIS LIBRARAY NAME", SoftItemType.CATEGORY));
-		softTree.setRoot(root);
+
+		try {
+			DBManager.getInstance().saveSoftItemTree(Utils.buildSoftTree(softTree.getRoot()));
+		}
+		catch (Exception e) {
+			String msg = String.format("Failed saving in database. Error: %s", e.getMessage());
+			logger.error(msg, e);
+			(new Alert(AlertType.ERROR, msg)).showAndWait();
+		}
 	}
 
 	@FXML
 	private void onOpen(ActionEvent event) {
-		if (dirty) {
-			if (!onCloseWindow()) {
-				return;
-			}
-		}
-		FileChooser fileChooser = new FileChooser();
-		fileChooser.setTitle("Choose file name to save request.");
+		DirectoryChooser dirChooser = new DirectoryChooser();
+		dirChooser.setTitle("Choose directory with data base.");
 		Configuration configuration;
 		try {
 			configuration = ConfigurationPersistence.load();
 		}
 		catch (Exception e) {
-			Alert alert = new Alert(AlertType.ERROR, e.getMessage());
-			alert.showAndWait();
-			return;
+			(new Alert(AlertType.ERROR, e.getMessage())).showAndWait();
+			configuration = new Configuration(null);
 		}
-		String fileName = configuration.getFileName();
-		if (!StringUtils.isEmpty(fileName)) {
-			File f = new File(fileName);
-			fileChooser.setInitialDirectory(f.getParentFile());
-			fileChooser.setInitialFileName(f.getName());
+		if (!StringUtils.isEmpty(configuration.getDirectoryName())) {
+			dirChooser.setInitialDirectory(new File(configuration.getDirectoryName()));
 		}
-		fileChooser.getExtensionFilters().add(new ExtensionFilter("Library files (*.json)", "*.json"));
-		File file = fileChooser.showOpenDialog(getPrimaryStage());
-		if (file != null) {
+		File directory = dirChooser.showDialog(getPrimaryStage());
+		if (directory != null) {
 			try {
-				SoftItemTree softItemTree = SoftItemTreePersistence.load(file.getAbsolutePath());
-				TreeItem<SoftItem> root = buildSoftTreeItem(softItemTree);
+				configuration.setDirectoryName(directory.getAbsolutePath());
+				ConfigurationPersistence.save(configuration);
+				DBManager.getInstance().setDirectory(directory.getAbsolutePath());
+				SoftItemTree softItemTree = SoftItemTreePersistence.load();
+				TreeItem<SoftItem> root;
+				if (softItemTree != null) {
+					root = buildSoftTreeItem(softItemTree);
+				} else {
+					root = new TreeItem<SoftItem>();
+				}
 				softTree.setRoot(root);
-				getPrimaryStage().setTitle(Utils.getTitle(file));
-				configuration.setFileName(file.getAbsolutePath());
-				ConfigurationPersistence.save(configuration);
+				getPrimaryStage().setTitle(Utils.getTitle(directory));
 			}
 			catch (Exception e) {
-				String message = String.format("Failed loading from %s. Error: %s", file.getAbsolutePath(), e.getMessage());
+				String message = String.format("Failed loading from %s. Error: %s", directory.getAbsolutePath(), e.getMessage());
 				logger.error(message, e);
 			}
 		}
-	}
-
-	@FXML
-	private void onSave(ActionEvent event) {
-		save();
-	}
-
-	/**
-	 * Saves the data.
-	 */
-	private void save() {
-		FileChooser fileChooser = new FileChooser();
-		fileChooser.setTitle("Choose file name to save request.");
-		Configuration configuration;
-		try {
-			configuration = ConfigurationPersistence.load();
-		}
-		catch (Exception e) {
-			Alert alert = new Alert(AlertType.ERROR, e.getMessage());
-			alert.showAndWait();
-			return;
-		}
-		String fileName = configuration.getFileName();
-		if (!StringUtils.isEmpty(fileName)) {
-			File f = new File(fileName);
-			fileChooser.setInitialDirectory(f.getParentFile());
-			fileChooser.setInitialFileName(f.getName());
-		}
-		fileChooser.getExtensionFilters().add(new ExtensionFilter("Library files (*.json)", "*.json"));
-
-		File file = fileChooser.showSaveDialog(getPrimaryStage());
-		if (file != null) {
-			try {
-				try {
-					ConfigurationPersistence.backup(file.getAbsolutePath());
-				}
-				catch (Exception e) {
-					final String message = String.format("Failed backuping %s. Error: %s", file.getAbsolutePath(), e.getMessage());
-					logger.error(message);
-					throw new Exception(message, e);
-				}
-				SoftItemTreePersistence.save(softTree.getRoot(), file.getAbsolutePath());
-				getPrimaryStage().setTitle(Utils.getTitle(file));
-				configuration.setFileName(file.getAbsolutePath());
-				ConfigurationPersistence.save(configuration);
-			}
-			catch (Exception e) {
-				String message = String.format("Failed saving. Error: %s", e.getMessage());
-				logger.error(message, e);
-				(new Alert(AlertType.ERROR, message)).showAndWait();
-			}
-		}
-		dirty = false;
 	}
 
 	@FXML
 	private void onExit(ActionEvent event) {
-		if (onCloseWindow()) {
-			Platform.exit();
-		}
+		Platform.exit();
 	}
 
 	private TreeItem<SoftItem> buildSoftTreeItem(final SoftItemTree softTree) {
@@ -688,26 +659,6 @@ public class MainViewController {
 		for (SoftItemNode softItemNode : child.getChildren()) {
 			addChild(subTreeItem, softItemNode);
 		}
-	}
-
-	public boolean onCloseWindow() {
-		boolean result;
-		if (dirty) {
-			Alert alert = new Alert(AlertType.CONFIRMATION, "Data was changed. Do you want to save changes?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
-			Optional<ButtonType> answer = alert.showAndWait();
-			if (answer.isPresent()) {
-				if (answer.get() == ButtonType.YES) {
-					save();
-				}
-				result = (answer.get() == ButtonType.YES || answer.get() == ButtonType.NO);
-			} else {
-				// Answer do not present
-				result = false;
-			}
-		} else {
-			result = true;
-		}
-		return result;
 	}
 
 	// Event Listener on MenuItem[#menuItemFind].onAction

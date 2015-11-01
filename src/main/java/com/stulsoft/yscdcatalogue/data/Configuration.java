@@ -4,36 +4,39 @@
 package com.stulsoft.yscdcatalogue.data;
 
 /**
+ * Configuration
+ * 
  * @author Yuriy Stul
  *
  */
 public class Configuration {
-	private String fileName;
+	private String directoryName;
 
 	/**
-	 * @return the fileName
+	 * @return the directoryName
 	 */
-	public String getFileName() {
-		return fileName;
+	public String getDirectoryName() {
+		return directoryName;
 	}
 
 	/**
-	 * @param fileName
-	 *            the fileName to set
+	 * @param directoryName
+	 *            the directoryName to set
 	 */
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
+	public void setDirectoryName(String directoryName) {
+		this.directoryName = directoryName;
 	}
 
 	protected Configuration() {
 	}
 
 	/**
-	 * @param fileName the file name
+	 * @param directoryName
+	 *            the directory name
 	 */
-	public Configuration(String fileName) {
+	public Configuration(String directoryName) {
 		super();
-		this.fileName = fileName;
+		this.directoryName = directoryName;
 	}
 
 	/*
@@ -45,7 +48,7 @@ public class Configuration {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((fileName == null) ? 0 : fileName.hashCode());
+		result = prime * result + ((directoryName == null) ? 0 : directoryName.hashCode());
 		return result;
 	}
 
@@ -63,10 +66,10 @@ public class Configuration {
 		if (getClass() != obj.getClass())
 			return false;
 		Configuration other = (Configuration) obj;
-		if (fileName == null) {
-			if (other.fileName != null)
+		if (directoryName == null) {
+			if (other.directoryName != null)
 				return false;
-		} else if (!fileName.equals(other.fileName))
+		} else if (!directoryName.equals(other.directoryName))
 			return false;
 		return true;
 	}
@@ -78,6 +81,6 @@ public class Configuration {
 	 */
 	@Override
 	public String toString() {
-		return "Configuration [fileName=" + fileName + "]";
+		return "Configuration [directoryName=" + directoryName + "]";
 	}
 }

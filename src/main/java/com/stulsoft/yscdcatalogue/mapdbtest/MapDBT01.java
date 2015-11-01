@@ -4,6 +4,7 @@
 package com.stulsoft.yscdcatalogue.mapdbtest;
 
 import java.io.File;
+import java.util.NavigableSet;
 import java.util.concurrent.ConcurrentNavigableMap;
 
 import org.mapdb.DB;
@@ -26,6 +27,8 @@ public class MapDBT01 {
 		test03();
 		test04();
 		test05();
+		test06();
+		test07();
 	}
 
 	private static void test01() {
@@ -92,5 +95,40 @@ public class MapDBT01 {
 		
 		treeMap.entrySet().forEach(e->System.out.format("key: %s, value: %s\n", e.getKey(), e.getValue()));
 		System.out.println("<==test05");
+	}
+	
+	private static void test06() {
+		System.out.println("==>test06");
+		DB db = DBMaker.newFileDB(new File("d:/work/mapDB03.db")).make();
+		NavigableSet<String> treeSet = db.getTreeSet("treeSet");
+		boolean result = treeSet.add("value1");
+		System.out.println("result: " + result);
+		db.commit();
+		db.close();
+		
+		db = DBMaker.newFileDB(new File("d:/work/mapDB03.db")).make();
+		treeSet = db.getTreeSet("treeSet");
+		System.out.println("treeSet.isEmpty(): " + treeSet.isEmpty());
+		db.close();
+		System.out.println("<==test06");
+	}
+	
+	private static void test07() {
+		System.out.println("==>test07");
+		DB db = DBMaker.newFileDB(new File("d:/work/mapDB07.db")).closeOnJvmShutdown().make();
+		NavigableSet<String> treeSet = db.getTreeSet("treeSet");
+		System.out.println("(0)treeSet.isEmpty(): " + treeSet.isEmpty());
+		treeSet.clear();
+		boolean result = treeSet.add("value1");
+		System.out.println("result: " + result);
+		System.out.println("(1)treeSet.isEmpty(): " + treeSet.isEmpty());
+		db.commit();
+//		db.close();
+//		
+//		db = DBMaker.newFileDB(new File("d:/work/mapDB07.db")).make();
+//		treeSet = db.getTreeSet("treeSet");
+//		System.out.println("treeSet.isEmpty(): " + treeSet.isEmpty());
+//		db.close();
+		System.out.println("<==test07");
 	}
 }

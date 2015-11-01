@@ -15,7 +15,6 @@
 					<items>
 						<MenuItem mnemonicParsing="false" onAction="#onNew" text="New" />
 						<MenuItem mnemonicParsing="false" onAction="#onOpen" text="Open" />
-						<MenuItem mnemonicParsing="false" onAction="#onSave" text="Save" />
 						<SeparatorMenuItem />
 						<MenuItem mnemonicParsing="false" onAction="#onExit" text="Exit" />
 					</items>
