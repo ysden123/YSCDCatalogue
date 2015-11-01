@@ -635,6 +635,9 @@ public class MainViewController {
 	}
 
 	private TreeItem<SoftItem> buildSoftTreeItem(final SoftItemTree softTree) {
+		if (softTree.getRoot() == null || softTree.getRoot().getData() == null) {
+			return null;
+		}
 		TreeItem<SoftItem> treeItem = new TreeItem<SoftItem>(softTree.getRoot().getData(), new ImageView(categoryIcon));
 
 		for (SoftItemNode child : softTree.getRoot().getChildren()) {
