@@ -10,7 +10,8 @@ import com.stulsoft.yscdcatalogue.Utils;
 import com.stulsoft.yscdcatalogue.data.SearchResult;
 import com.stulsoft.yscdcatalogue.data.SoftItem;
 import com.stulsoft.yscdcatalogue.data.SoftItemTree;
-import com.stulsoft.yscdcatalogue.service.Search;
+//import com.stulsoft.yscdcatalogue.service.Search;
+import com.stulsoft.yscdcatalogue.scala.service.Search;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
