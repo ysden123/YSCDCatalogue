@@ -61,7 +61,7 @@ class Search(softItemTree: SoftItemTree, searchText: String) {
         //@formatter:on
       } catch {
         case e: Exception => {
-          logger.error("Failed getting disk for {}. Error: {}", node.getData.getName, e.getMessage)
+          logger.error("Failed getting disk for {}. Error: {}", node.getData.getName, e.getMessage, e)
         }
       }
     }
@@ -74,7 +74,7 @@ class Search(softItemTree: SoftItemTree, searchText: String) {
     if (StringUtils.containsIgnoreCase(diskItemNode.getData.getFullPath, searchText)
       || StringUtils.containsIgnoreCase(diskItemNode.getData.getComment, searchText)
       || StringUtils.containsIgnoreCase(diskItemNode.getData.getStorageName, searchText)) {
-      val result = new SearchResult(categoryName, diskName, diskItemNode.getData().getFullPath(), treeItem)
+      val result = new SearchResult(categoryName, diskName, diskItemNode.getData.getFullPath, treeItem)
       results.add(result)
     }
     //@formatter:on
