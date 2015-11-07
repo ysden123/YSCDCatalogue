@@ -21,14 +21,11 @@ import scala.collection.JavaConverters._
 
 /**
  * Finds items.
- * @param softItemTree
- *            the three with Soft Items
- * @param searchText
- *            the search text
+ *
  * @author Yuriy Stul
  *
  */
-class Search(softItemTree: SoftItemTree, searchText: String) {
+object Search {
   val logName = { val c = getClass.getName; c.substring(0, c.lastIndexOf('.')) }
   val logger: Logger = LogManager.getLogger(logName)
 
@@ -37,15 +34,24 @@ class Search(softItemTree: SoftItemTree, searchText: String) {
    *
    * @return the collection of the found items
    */
-  def find: ObservableList[SearchResult] = {
+
+  /**
+   * Finds items that contains specified search text in the full path, in the comments, on in the storage name.
+   * @param softItemTree
+   *            the three with Soft Items
+   * @param searchText
+   *            the search text
+   * @return collection with items that contains specified search text in the full path, in the comments, on in the storage name.
+   */
+  def find(softItemTree: SoftItemTree, searchText: String): ObservableList[SearchResult] = {
     logger.debug("Staring searching for {}.", searchText)
     val results: ObservableList[SearchResult] = FXCollections.observableArrayList()
-    find(results, softItemTree.getRoot)
+    find(searchText, results, softItemTree.getRoot)
     logger.debug("{} entries were found.", String.valueOf(results.size))
     return results
   }
 
-  private def find(results: ObservableList[SearchResult], node: SoftItemNode): Unit = {
+  private def find(searchText: String, results: ObservableList[SearchResult], node: SoftItemNode): Unit = {
     if (node.getData.getType == SoftItemType.DISK) {
       logger.debug("Looking inside {}", node.getData.getName)
       try {
@@ -53,7 +59,7 @@ class Search(softItemTree: SoftItemTree, searchText: String) {
         val rootNode = diskItemTree.getRoot
 
         //@formatter:off
-        findInDisk(results,
+        findInDisk(searchText, results,
           rootNode,
           node.getParent.getData.getName,
           rootNode.getData.getStorageName,
@@ -66,10 +72,10 @@ class Search(softItemTree: SoftItemTree, searchText: String) {
       }
     }
 
-    node.getChildren.asScala.foreach { child => find(results, child) }
+    node.getChildren.asScala.foreach { child => find(searchText, results, child) }
   }
 
-  private def findInDisk(results: ObservableList[SearchResult], diskItemNode: DiskItemNode, categoryName: String, diskName: String, treeItem: TreeItem[SoftItem]): Unit = {
+  private def findInDisk(searchText: String, results: ObservableList[SearchResult], diskItemNode: DiskItemNode, categoryName: String, diskName: String, treeItem: TreeItem[SoftItem]): Unit = {
     //@formatter:off
     if (StringUtils.containsIgnoreCase(diskItemNode.getData.getFullPath, searchText)
       || StringUtils.containsIgnoreCase(diskItemNode.getData.getComment, searchText)
@@ -79,6 +85,6 @@ class Search(softItemTree: SoftItemTree, searchText: String) {
     }
     //@formatter:on
 
-    diskItemNode.getChildren.asScala.foreach { child => findInDisk(results, child, categoryName, diskName, treeItem) }
+    diskItemNode.getChildren.asScala.foreach { child => findInDisk(searchText, results, child, categoryName, diskName, treeItem) }
   }
 }

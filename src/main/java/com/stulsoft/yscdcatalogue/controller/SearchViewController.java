@@ -10,7 +10,6 @@ import com.stulsoft.yscdcatalogue.Utils;
 import com.stulsoft.yscdcatalogue.data.SearchResult;
 import com.stulsoft.yscdcatalogue.data.SoftItem;
 import com.stulsoft.yscdcatalogue.data.SoftItemTree;
-//import com.stulsoft.yscdcatalogue.service.Search;
 import com.stulsoft.yscdcatalogue.scala.service.Search;
 
 import javafx.beans.value.ChangeListener;
@@ -101,8 +100,7 @@ public class SearchViewController {
 		}
 
 		SoftItemTree softItemTree = Utils.buildSoftTree(softTree.getRoot());
-		Search search = new Search(softItemTree, searchText.getText());
-		ObservableList<SearchResult> results = search.find();
+		ObservableList<SearchResult> results = Search.find(softItemTree, searchText.getText());
 		resultTable.setItems(results);
 	}
 }
