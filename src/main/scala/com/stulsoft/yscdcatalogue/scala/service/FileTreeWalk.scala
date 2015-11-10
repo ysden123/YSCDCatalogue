@@ -40,6 +40,7 @@ object FileTreeWalk {
    */
   @throws[IOException]("If an error was occurred during walking through file tree")
   def buildFileTree(startFolder: String): DiskItemTree = {
+    require(startFolder != null && startFolder.length > 0, "startFolder could not be null or empty.")
     val startPath: Path = Paths.get(startFolder)
     val t: DiskItemTree = new DiskItemTree(new DiskItem(startFolder, DiskItemType.DIRECTORY, null, null))
     

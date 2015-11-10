@@ -44,6 +44,8 @@ object Search {
    * @return collection with items that contains specified search text in the full path, in the comments, on in the storage name.
    */
   def find(softItemTree: SoftItemTree, searchText: String): ObservableList[SearchResult] = {
+    require(softItemTree != null, "softItemTree could not be null.")
+    require(searchText != null && searchText.length > 0, "searchText could not be null or empty.")
     logger.debug("Staring searching for {}.", searchText)
     val results: ObservableList[SearchResult] = FXCollections.observableArrayList()
     find(searchText, results, softItemTree.getRoot)
