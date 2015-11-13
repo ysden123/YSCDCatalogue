@@ -18,6 +18,7 @@ import com.stulsoft.yscdcatalogue.data.SearchResult
 import com.stulsoft.yscdcatalogue.persistence.DBManager;
 
 import scala.collection.JavaConverters._
+import scala.util.matching.Regex
 
 /**
  * Finds items.
@@ -47,13 +48,14 @@ object Search {
     require(softItemTree != null, "softItemTree could not be null.")
     require(searchText != null && searchText.length > 0, "searchText could not be null or empty.")
     logger.debug("Staring searching for {}.", searchText)
+    val searchTextR = prepareRegEx(searchText)
     val results: ObservableList[SearchResult] = FXCollections.observableArrayList()
-    find(searchText, results, softItemTree.getRoot)
+    find(searchTextR, results, softItemTree.getRoot)
     logger.debug("{} entries were found.", String.valueOf(results.size))
     return results
   }
 
-  private def find(searchText: String, results: ObservableList[SearchResult], node: SoftItemNode): Unit = {
+  private def find(searchTextR: Regex, results: ObservableList[SearchResult], node: SoftItemNode): Unit = {
     if (node.getData.getType == SoftItemType.DISK) {
       logger.debug("Looking inside {}", node.getData.getName)
       try {
@@ -61,7 +63,7 @@ object Search {
         val rootNode = diskItemTree.getRoot
 
         //@formatter:off
-        findInDisk(searchText, results,
+        findInDisk(searchTextR, results,
           rootNode,
           node.getParent.getData.getName,
           rootNode.getData.getStorageName,
@@ -74,19 +76,31 @@ object Search {
       }
     }
 
-    node.getChildren.asScala.foreach { child => find(searchText, results, child) }
+    node.getChildren.asScala.foreach { child => find(searchTextR, results, child) }
   }
 
-  private def findInDisk(searchText: String, results: ObservableList[SearchResult], diskItemNode: DiskItemNode, categoryName: String, diskName: String, treeItem: TreeItem[SoftItem]): Unit = {
+  private def findInDisk(searchTextR: Regex, results: ObservableList[SearchResult], diskItemNode: DiskItemNode, categoryName: String, diskName: String, treeItem: TreeItem[SoftItem]): Unit = {
+
     //@formatter:off
-    if (StringUtils.containsIgnoreCase(diskItemNode.getData.getFullPath, searchText)
-      || StringUtils.containsIgnoreCase(diskItemNode.getData.getComment, searchText)
-      || StringUtils.containsIgnoreCase(diskItemNode.getData.getStorageName, searchText)) {
+    if ((diskItemNode.getData.getFullPath != null && searchTextR.findFirstIn(diskItemNode.getData.getFullPath).isDefined)
+      || (diskItemNode.getData.getComment != null && searchTextR.findFirstIn(diskItemNode.getData.getComment).isDefined)
+      || (diskItemNode.getData.getStorageName != null && searchTextR.findFirstIn(diskItemNode.getData.getStorageName).isDefined)) {
       val result = new SearchResult(categoryName, diskName, diskItemNode.getData.getFullPath, treeItem)
       results.add(result)
     }
     //@formatter:on
 
-    diskItemNode.getChildren.asScala.foreach { child => findInDisk(searchText, results, child, categoryName, diskName, treeItem) }
+    diskItemNode.getChildren.asScala.foreach { child => findInDisk(searchTextR, results, child, categoryName, diskName, treeItem) }
+  }
+
+  private def prepareRegEx(text: String): Regex = {
+    var patternText = text.replace(".", "\\.").replace("*", ".*(?i)")
+    if (!patternText.startsWith(".*")) {
+      patternText = "(?i)" + patternText
+    }
+    if (patternText.endsWith("(?i)")) {
+      patternText = patternText.substring(0, patternText.lastIndexOf("(?i)"))
+    }
+    return patternText.r
   }
 }
