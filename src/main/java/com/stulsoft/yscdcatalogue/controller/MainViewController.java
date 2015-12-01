@@ -28,7 +28,7 @@ import com.stulsoft.yscdcatalogue.data.SoftItemType;
 import com.stulsoft.yscdcatalogue.persistence.ConfigurationPersistence;
 import com.stulsoft.yscdcatalogue.persistence.DBManager;
 import com.stulsoft.yscdcatalogue.persistence.SoftItemTreePersistence;
-import com.stulsoft.yscdcatalogue.service.FileTreeWalk;
+import com.stulsoft.yscdcatalogue.scala.service.FileTreeWalk;
 
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -393,7 +393,7 @@ public class MainViewController {
 									DiskItemTree tree = FileTreeWalk.buildFileTree(directory.getAbsolutePath());
 									return tree;
 								}
-								catch (IOException e) {
+								catch (Exception e) {
 									logger.error("Failed adding a disk " + directory.getAbsolutePath() + ", error: " + e.getMessage(), e);
 								}
 								finally {
