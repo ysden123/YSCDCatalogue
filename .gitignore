@@ -4,3 +4,5 @@
 /.gradle
 /build
 /fileName/
+/*.cache-main
+/*.cache-tests
