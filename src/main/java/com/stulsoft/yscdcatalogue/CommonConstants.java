@@ -9,5 +9,5 @@ package com.stulsoft.yscdcatalogue;
  */
 public class CommonConstants {
 public static final String APPLICATION_NAME = "YSCDCatalogueMain";
-public static final String APPLICATION_VERSION = "(2.0.0)";
+public static final String APPLICATION_VERSION = "(2.0.1)";
 }

@@ -7,3 +7,6 @@
 /*.cache-main
 /*.cache-tests
 /project/target/config-classes
+/.settings
+/.classpath
+/.project
