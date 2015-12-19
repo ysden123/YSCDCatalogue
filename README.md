@@ -9,10 +9,12 @@ YSCDCatalogue allows
 ## Downloads - binaries ##
 Java 8 is required to execute the application.
 
-Command to execute: 
-	before version 2.0.1: java -jar YSCDCatalogue.jar or just double click on YSCDCatalogue.jar file.
-	for version 2.0.1 and greater: run pack/bin/yscd-catalogue-main.bat.
- 
+Command to execute:
+
+* before version 2.0.1: java -jar YSCDCatalogue.jar or just double click on YSCDCatalogue.jar file.
+* for version 2.0.1 and greater: run pack/bin/yscd-catalogue-main.bat.
+
+Version:
 
 * v 2.0.1 - https://github.com/ysden123/YSCDCatalogue/releases/tag/v2.0.1
 * v 2.0.0 - https://github.com/ysden123/YSCDCatalogue/releases/tag/v2.0.0
