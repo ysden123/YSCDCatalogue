@@ -9,7 +9,11 @@ lazy val root = (project in file(".")).
     	, "org.apache.logging.log4j" % "log4j-api" % "2.5"
     	, "org.apache.logging.log4j" % "log4j-core" % "2.5"
     	, "org.mapdb" % "mapdb" % "1.0.8"
+    	, "junit" % "junit" % "4.12"
     ),
     scalacOptions in (Compile, doc) ++= Seq("-author"),
-    packAutoSettings
+    packAutoSettings,
+    packExcludeJars := Seq(
+    	"junit-4.12.jar"
+		)
 )

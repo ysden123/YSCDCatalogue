@@ -1,3 +1,0 @@
-GRADLE_BUILD_COMMANDS=org.scala-ide.sdt.core.scalabuilder
-GRADLE_NATURES=org.scala-ide.sdt.core.scalanature,org.eclipse.jdt.core.javanature
-eclipse.preferences.version=1
