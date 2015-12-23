@@ -16,6 +16,7 @@ Command to execute:
 
 Version:
 
+* v 2.1.1 - https://github.com/ysden123/YSCDCatalogue/releases/tag/v2.1.1
 * v 2.0.1 - https://github.com/ysden123/YSCDCatalogue/releases/tag/v2.0.1
 * v 2.0.0 - https://github.com/ysden123/YSCDCatalogue/releases/tag/v2.0.0
 * v 1.0.1 - https://github.com/ysden123/YSCDCatalogue/releases/tag/v1.0.0

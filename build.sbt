@@ -1,7 +1,7 @@
 lazy val root = (project in file(".")).
   settings(
     name := "YSCDCatalogue",
-    version := "2.0.1",
+    version := "2.1.1",
     scalaVersion := "2.11.7",
     libraryDependencies ++= Seq(
     	"org.apache.commons" % "commons-lang3" % "3.4"

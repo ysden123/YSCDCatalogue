@@ -73,7 +73,7 @@ public class DBManager {
 		if (!dir.exists()) {
 			dir.mkdirs();
 		}
-		db = DBMaker.newFileDB(new File(directory, "YSCDCatalogueDB.db")).closeOnJvmShutdown().make();
+		db = DBMaker.newFileDB(new File(directory, "YSCDCatalogueDB.db")).compressionEnable().closeOnJvmShutdown().make();
 		softItemTreeSet = db.getTreeSet("softItemTree");
 		diskItemTreeMap = db.getTreeMap("diskItemTree");
 	}
